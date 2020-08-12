@@ -15,7 +15,7 @@ Symbols defined:
 
 If[
 	!TrueQ[WolframLanguageForJupyter`Private`$GotCompletionUtilities],
-	
+
 	WolframLanguageForJupyter`Private`$GotCompletionUtilities = True;
 
 (************************************

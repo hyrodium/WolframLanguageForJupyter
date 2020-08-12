@@ -46,7 +46,7 @@ Get[FileNameJoin[{DirectoryName[$InputFileName], "RequestHandlers.wl"}]]; (* isC
 Begin["`Private`"];
 
 (* define the evaluation loop *)
-loop[] := 
+loop[] :=
 	Module[
 		{
 			(* the socket that has become ready *)
@@ -78,13 +78,13 @@ loop[] :=
 				loopState["frameAssoc"] = getFrameAssoc[rawFrame];
 				(* handle this frame based on the type of request *)
 				Switch[
-					loopState["frameAssoc"]["header"]["msg_type"], 
+					loopState["frameAssoc"]["header"]["msg_type"],
 					(* if asking for information about the kernel, ... *)
 					"kernel_info_request",
 					(* set the appropriate reply type *)
 					loopState["replyMsgType"] = "kernel_info_reply";
 					(* provide the information *)
-					loopState["replyContent"] = 
+					loopState["replyContent"] =
 						StringJoin[
 							"{\"protocol_version\": \"5.3.0\",\"implementation\": \"WolframLanguageForJupyter\",\"implementation_version\": \"0.0.1\",\"language_info\": {\"name\": \"Wolfram Language\",\"version\": \"12.0\",\"mimetype\": \"application/vnd.wolfram.m\",\"file_extension\": \".m\",\"pygments_lexer\": \"mathematica\",\"codemirror_mode\": \"mathematica\"},\"banner\" : \"Wolfram Language/Wolfram Engine Copyright 2019",
 							bannerWarning,
@@ -127,7 +127,7 @@ loop[] :=
 				sendFrame[ioPubSocket, statusReplyFrame];
 
 				(* create a message frame to send a reply on the socket that became ready *)
-				replyFrame = 
+				replyFrame =
 					createReplyFrame[
 						(* use the current source frame *)
 						loopState["frameAssoc"],

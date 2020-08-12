@@ -20,7 +20,7 @@ Symbols defined:
 
 If[
 	!TrueQ[WolframLanguageForJupyter`Private`$GotEvaluationUtilities],
-	
+
 	WolframLanguageForJupyter`Private`$GotEvaluationUtilities = True;
 
 (************************************
@@ -172,7 +172,7 @@ If[
 		to quit, if running under
 		a Jupyter console
 *************************************)
-	
+
 	Unprotect[Quit];
 	Quit[ourArgs___] :=
 		Block[
@@ -393,7 +393,7 @@ If[
 			];
 
 			(* annotate the lines of input left to be processed with their line numbers *)
-			annotatedLinesLeft = 
+			annotatedLinesLeft =
 				Partition[
 					Riffle[
 						newTracker["LinesLeft"],
@@ -536,7 +536,7 @@ If[
 				];
 
 				(* catch any Throws that were not handled by the input itself *)
-				intermediate = 
+				intermediate =
 					Catch[
 						(* evaluate the expression string *)
 						ToExpression[
@@ -570,7 +570,7 @@ If[
 					Unprotect[In];
 					Replace[
 						ToExpression[exprStr, InputForm, Hold],
-						Hold[held_] :> 
+						Hold[held_] :>
 							SetDelayed[
 								In[
 									loopState["executionCount"] + parseTracker["ExpressionsParsed"] - 1
@@ -618,9 +618,9 @@ If[
 			(* preserve the locations of the output lines with respect to the Nulls *)
 			AssociateTo[
 				totalResult,
-				"EvaluationResultOutputLineIndices" -> 
+				"EvaluationResultOutputLineIndices" ->
 					(
-						(loopState["executionCount"] - 1) + 
+						(loopState["executionCount"] - 1) +
 							Flatten[Position[rawEvaluationResult, Except[Null], {1}, Heads -> False]]
 					)
 			];
@@ -636,7 +636,7 @@ If[
 			(* add the total number of indices consumed by this evaluation *)
 			AssociateTo[
 				totalResult,
-				"ConsumedIndices" -> 
+				"ConsumedIndices" ->
 					(* if parseTracker["SyntaxError"] is true, one less index was consumed *)
 					If[
 						parseTracker["SyntaxError"],

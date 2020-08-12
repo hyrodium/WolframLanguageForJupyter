@@ -30,7 +30,7 @@ projectHome = If[StringQ[$InputFileName] && $InputFileName != "", DirectoryName[
 (* returns string form *)
 getVersionFromKernel[mathBin_String] :=
 	Module[{link, res},
-		link = 
+		link =
 			LinkLaunch[
 				StringJoin[
 					{
@@ -56,7 +56,7 @@ getVersionFromKernel[mathBin_String] :=
 
 (* determine display name for Jupyter installation from Wolfram Engine $Version/$VersionNumber *)
 (* returns {Kernel ID, Display Name} *)
-getNames[mathBin_String, notProvidedQ_?BooleanQ] := 
+getNames[mathBin_String, notProvidedQ_?BooleanQ] :=
 	Module[{version, installDir, (* names, hashedKernelUUID *) versionStr},
 		(* if Wolfram Engine binary not provided, just evaluate $Version in the current session *)
 		(* otherwise, use MathLink to obtain $Version *)
@@ -79,7 +79,7 @@ getNames[mathBin_String, notProvidedQ_?BooleanQ] :=
 
 		names = StringCases[version, name___ ~~ " for " ~~ ("Mac" | "Microsoft" | "Windows" | "Linux") -> name];
 		Return[
-			If[Length[names] > 0, 
+			If[Length[names] > 0,
 				{
 					ToLowerCase[StringJoin[
 						"WolframLanguage-script-",
@@ -116,7 +116,7 @@ getNames[mathBin_String, notProvidedQ_?BooleanQ] :=
 (* mathBinSession: WolframKernel location for the current session *)
 (* fileExt: file extension for executables *)
 (* pathSeperator: delimiter for directories on PATH *)
-defineGlobalVars[] := 
+defineGlobalVars[] :=
 	Switch[
 		$OperatingSystem,
 		"Windows",
@@ -152,7 +152,7 @@ attemptPathRegeneration[] := If[
 							"StandardOutput",
 							StringJoin[Import["~/.profile", "String"], "\necho $PATH"],
 							ProcessEnvironment -> {}
-						], 
+						],
 						"\n"
 					]
 		];
@@ -160,7 +160,7 @@ attemptPathRegeneration[] := If[
 
 (* find Jupyter installation path *)
 (* returns kernel IDs in Jupyter *)
-findJupyterPath[] := 
+findJupyterPath[] :=
 	SelectFirst[
 		splitPath,
 		(* check every directory in PATH to see if a Jupyter binary is a member *)
@@ -169,18 +169,18 @@ findJupyterPath[] :=
 
 (* get information about installed kernels in Jupyter *)
 (* returns kernel IDs in Jupyter *)
-getKernels[jupyterPath_String, processEnvironment_] := 
+getKernels[jupyterPath_String, processEnvironment_] :=
 	Module[{json, kernelspecAssoc},
 		(* obtain information about "jupyter kernelspec list" in JSON *)
 		json = Quiet[ImportString[RunProcess[{jupyterPath, "kernelspec", "list", "--json"}, "StandardOutput", ProcessEnvironment -> processEnvironment], "JSON"]];
 		(* transform that JSON information into an Association *)
-		kernelspecAssoc = 
+		kernelspecAssoc =
 			If[
 				FailureQ[json],
 				Association[],
 				Replace[
 					json,
-					part_List /; AllTrue[part, Head[#1] === Rule &] -> Association @ part, 
+					part_List /; AllTrue[part, Head[#1] === Rule &] -> Association @ part,
 					{0, Infinity}
 				]
 			];
@@ -203,7 +203,7 @@ getKernels[jupyterPath_String, processEnvironment_] :=
 (* removeQ: remove a Jupyter installation or not *)
 (* removeAllQ: clear all Jupyter installations or not *)
 (* removeQ first, removeAllQ second: "add" is False, False; "remove" is True, False, and "clear" is True, True *)
-configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] := 
+configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 	Module[
 		{
 			kernelScript,
@@ -240,7 +240,7 @@ configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 			jupyterPath = FileNameJoin[{jupyterPath, StringJoin["jupyter", fileExt]}];
 		];
 
-		mathBin = 
+		mathBin =
 			Lookup[
 				specs,
 				"WolframEngineBinary",
@@ -308,7 +308,7 @@ configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 
 			(* export a JSON file to the staging directory that contains all the relevant information on how to run the kernel *)
 			Export[
-				FileNameJoin[{tempDir, "kernel.json"}], 
+				FileNameJoin[{tempDir, "kernel.json"}],
 				Association[
 					"argv" -> {mathBin, "-script", kernelScript, "{connection_file}", "ScriptInstall" (* , "-noprompt" *)},
 					"display_name" -> displayName,
@@ -388,7 +388,7 @@ If[
 (* START: Building usage message *)
 
 templateJupyterPath = StringJoin["\"", FileNameJoin[{"path", "to", "Jupyter-binary"}], "\""];
-templateWLPath = StringJoin["\"", FileNameJoin[{"", "absolute", "path", "to", "Wolfram-Engine-binary--not-wolframscript"}], "\""]; 
+templateWLPath = StringJoin["\"", FileNameJoin[{"", "absolute", "path", "to", "Wolfram-Engine-binary--not-wolframscript"}], "\""];
 
 (* helpMessage = StringJoin[
 				"configure-jupyter.wls add [", templateJupyterPath, "]\n",
