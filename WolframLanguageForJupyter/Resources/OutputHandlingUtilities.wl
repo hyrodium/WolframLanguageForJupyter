@@ -21,7 +21,7 @@ Symbols defined:
 
 If[
 	!TrueQ[WolframLanguageForJupyter`Private`$GotOutputHandlingUtilities],
-	
+
 	WolframLanguageForJupyter`Private`$GotOutputHandlingUtilities = True;
 
 (************************************
@@ -92,7 +92,7 @@ If[
 
 			(* pattern objects *)
 			pObjects
-		}, 
+		},
 
 		(* if we cannot use the frontend, use text *)
 		If[
@@ -123,13 +123,13 @@ If[
 		];
 
 		(* breakdown expr into atomic objects organized by their Head *)
-		pObjects = 
+		pObjects =
 			GroupBy[
 				Complement[
 					Quiet[Cases[
-						expr, 
-						elem_ /; (Depth[Unevaluated[elem]] == 1) -> Hold[elem], 
-						{0, Infinity}, 
+						expr,
+						elem_ /; (Depth[Unevaluated[elem]] == 1) -> Hold[elem],
+						{0, Infinity},
 						Heads -> True
 					]],
 					(* these symbols are fine *)
@@ -155,11 +155,11 @@ If[
 			ContainsOnly[Keys[pObjects], {Integer, Real, String, Symbol}],
 	   		Return[
 				AllTrue[
-						Lookup[pObjects, String, {}], 
+						Lookup[pObjects, String, {}],
 						(!containsPUAQ[ReleaseHold[#1]]) &
 					] &&
 		   			AllTrue[
-		   				Lookup[pObjects, Symbol, {}], 
+		   				Lookup[pObjects, Symbol, {}],
 		   				(
 							Replace[
 								#1,
@@ -183,6 +183,7 @@ If[
 	(* generate the textual form of a result *)
 	(* NOTE: the OutputForm (which ToString uses) of any expressions wrapped with, say, InputForm should
 		be identical to the string result of an InputForm-wrapped expression itself *)
+	toText /: toText[TeXForm[s_String]] = s;
 	toText[result_] :=
 		ToString[
 			If[
@@ -191,11 +192,15 @@ If[
 				result
 			],
 			(* also, use the current PageWidth setting for $Output *)
-			PageWidth -> $truePageWidth
+			PageWidth -> If[
+				Head[result] =!= TeXForm,
+				$truePageWidth,
+				Infinity
+			]
 		];
 
 	(* generate HTML for the textual form of a result *)
-	toOutTextHTML[result_] := 
+	toOutTextHTML[result_] :=
 		Module[
 			{isTeX},
 			(* check if this result should be marked as TeX *)
@@ -210,7 +215,7 @@ If[
 							(* preformatted *)
 							"<pre style=\"",
 							(* use Courier *)
-							StringJoin[{"&#", ToString[#1], ";"} & /@ ToCharacterCode["font-family: \"Courier New\",Courier,monospace;", "Unicode"]], 
+							StringJoin[{"&#", ToString[#1], ";"} & /@ ToCharacterCode["font-family: \"Courier New\",Courier,monospace;", "Unicode"]],
 							"\">"
 						},
 						{}
@@ -220,7 +225,7 @@ If[
 					If[isTeX, "&#36;&#36;", ""],
 
 					(* the textual form of the result *)
-					({"&#", ToString[#1], ";"} & /@ 
+					({"&#", ToString[#1], ";"} & /@
 						ToCharacterCode[
 							(* toStringUsingOutput[result] *) toText[result],
 							"Unicode"
@@ -271,7 +276,7 @@ If[
 		];
 
 	(* generate HTML for the rasterized form of a result *)
-	toOutImageHTML[result_] := 
+	toOutImageHTML[result_] :=
 		Module[
 			{
 				(* the rasterization of result *)

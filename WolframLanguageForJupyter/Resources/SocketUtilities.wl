@@ -16,7 +16,7 @@ Symbols defined:
 
 If[
 	!TrueQ[WolframLanguageForJupyter`Private`$GotSocketUtilities],
-	
+
 	WolframLanguageForJupyter`Private`$GotSocketUtilities = True;
 
 (************************************
@@ -57,23 +57,23 @@ If[
 
 	(* write a message frame that matches Jupyter's messaging protocols to a socket *)
 	sendFrame[socket_, frame_Association] := Module[{},
-		
+
 		(* see https://jupyter-client.readthedocs.io/en/stable/messaging.html for an explanation of the below *)
-		
+
 		socketWriteFunction[
-			socket, 
+			socket,
 			frame["ident"],
 			"Multipart" -> True
 		];
 
 		socketWriteFunction[
-			socket, 
+			socket,
 			StringToByteArray[#1],
 			"Multipart" -> True
 		]& /@ Lookup[frame, {"idsmsg", "signature", "header", "pheader", "metadata"}];
 
 		socketWriteFunction[
-			socket, 
+			socket,
 			If[ByteArrayQ[frame["content"]], frame["content"], StringToByteArray[frame["content"]]],
 			"Multipart" -> False
 		];

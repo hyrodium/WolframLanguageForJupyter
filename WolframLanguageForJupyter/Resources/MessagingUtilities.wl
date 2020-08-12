@@ -15,7 +15,7 @@ Symbols defined:
 
 If[
 	!TrueQ[WolframLanguageForJupyter`Private`$GotMessagingUtilities],
-	
+
 	WolframLanguageForJupyter`Private`$GotMessagingUtilities = True;
 
 (************************************
@@ -63,12 +63,12 @@ If[
 					(* see https://jupyter-client.readthedocs.io/en/stable/messaging.html *)
 					StringCases[
 						frameStr,
-						ident1___ ~~ "<IDS|MSG>" ~~ ___ ~~ 
+						ident1___ ~~ "<IDS|MSG>" ~~ ___ ~~
 							"{" ~~ json2___ ~~ "}" ~~
 								"{" ~~ json3___ ~~ "}" ~~
 									"{" ~~ json4___ ~~ "}" ~~
 										"{" ~~ json5___ ~~ "}" ~~
-											EndOfString :> 
+											EndOfString :>
 							Prepend[
 								(* add back in the brackets *)
 								(
@@ -111,7 +111,7 @@ If[
 			replyContent : (_String | _ByteArray),
 			(* whether to list sourceFrame as a parent for the reply message frame *)
 			branchOff:(True|False)
-		] := 
+		] :=
 			Module[
 				{
 					(* for storing the header and content of the source message frame *)
@@ -150,9 +150,9 @@ If[
 				(* generate the signature of the reply message *)
 				AssociateTo[
 					result,
-					"signature" -> 
+					"signature" ->
 						hmac[
-							keyString, 
+							keyString,
 							StringJoin[
 								result["header"],
 								result["pheader"],

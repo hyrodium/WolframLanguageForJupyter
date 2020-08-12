@@ -37,7 +37,7 @@ Symbols defined:
 
 If[
 	!TrueQ[WolframLanguageForJupyter`Private`$GotInitialization],
-	
+
 	WolframLanguageForJupyter`Private`$GotInitialization = True;
 
 (************************************
@@ -179,7 +179,7 @@ If[
 *************************************)
 
 	(* create an association for maintaining state in the evaluation loop *)
-	loopState = 
+	loopState =
 		(* schema for the Association *)
 		Association[
 			(* index for the execution of the next input *)
@@ -246,7 +246,7 @@ If[
 	connectionAssoc = ToString /@ Association[Import[$CommandLine[[4]], "JSON"]];
 
 	(* warnings to display in kernel information *)
-	bannerWarning = 
+	bannerWarning =
 		If[
 			Length[$CommandLine] > 4,
 			"\\n\\nNote: This Jupyter kernel was installed through the WolframScript install method. Accordingly, updates to a WolframLanguageForJupyter paclet will not affect this kernel.",
@@ -278,7 +278,7 @@ If[
 				"for-WolframLanguageForJupyter-stdout",
 				{
 					"ConstructorFunction" -> Function[{name, isAppend, caller, opts}, {True, {}}],
-					"WriteFunction" -> 
+					"WriteFunction" ->
 						Function[
 							{state, bytes},
 							If[
@@ -357,7 +357,7 @@ If[
 						];
 						(* and loop the data back to Jupyter *)
 						socketWriteFunction[
-							heartbeatSocket, 
+							heartbeatSocket,
 							heartbeatRecv,
 							"Multipart" -> False
 						];

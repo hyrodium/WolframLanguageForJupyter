@@ -15,7 +15,7 @@ ConfigureJupyter::addconflict = "An error has occurred. A Wolfram Engine with th
 
 ConfigureJupyter::nolink = "An error has occurred: Communication with provided Wolfram Engine binary could not be established.";
 
-ConfigureJupyter::usage = 
+ConfigureJupyter::usage =
 	"ConfigureJupyter[subcommand:\"add\"|\"remove\"|\"clear\"] evaluates the action associated with subcommand, relying on the current Wolfram Engine binary path and the first Jupyter installation on Environment[\"PATH\"] when relevant.
 ConfigureJupyter[subcommand:\"add\"|\"remove\"|\"clear\", opts] evaluates the action associated with subcommand, using specified paths for \"WolframEngineBinary\" and \"JupyterInstallation\" when given as options.";
 
@@ -36,7 +36,7 @@ projectHome = DirectoryName[$InputFileName];
 (* returns string form *)
 getVersionFromKernel[mathBin_String] :=
 	Module[{link, res},
-		link = 
+		link =
 			LinkLaunch[
 				StringJoin[
 					{
@@ -62,7 +62,7 @@ getVersionFromKernel[mathBin_String] :=
 
 (* determine display name for Jupyter installation from Wolfram Engine $Version/$VersionNumber *)
 (* returns {Kernel ID, Display Name} *)
-getNames[mathBin_String, notProvidedQ_?BooleanQ] := 
+getNames[mathBin_String, notProvidedQ_?BooleanQ] :=
 	Module[{version, installDir, (* names, hashedKernelUUID *) versionStr},
 		(* if Wolfram Engine binary not provided, just evaluate $Version in the current session *)
 		(* otherwise, use MathLink to obtain $Version *)
@@ -78,7 +78,7 @@ getNames[mathBin_String, notProvidedQ_?BooleanQ] :=
 			];
 			installDir = mathBin;
 		];
-		
+
 		versionStr = StringTrim[version, "."];
 		Return[
 			{
@@ -94,7 +94,7 @@ getNames[mathBin_String, notProvidedQ_?BooleanQ] :=
 (* mathBinSession: WolframKernel location for the current session *)
 (* fileExt: file extension for executables *)
 (* pathSeperator: delimiter for directories on PATH *)
-defineGlobalVars[] := 
+defineGlobalVars[] :=
 	Switch[
 		$OperatingSystem,
 		"Windows",
@@ -116,7 +116,7 @@ fileExt := (defineGlobalVars[]; fileExt);
 pathSeperator := (defineGlobalVars[]; pathSeperator);
 
 (* a list of directories in PATH *)
-splitPath := 
+splitPath :=
 	StringSplit[
 		(* restore PATH, if due to a bug, it becomes essentially empty; this is relevant to finding the Jupyter installation *)
 		(* otherwise, just use PATH directly *)
@@ -128,7 +128,7 @@ splitPath :=
 								"StandardOutput",
 								StringJoin[Import["~/.profile", "String"], "\necho $PATH"],
 								ProcessEnvironment -> {}
-							], 
+							],
 							"\n"
 						]
 			,
@@ -139,7 +139,7 @@ splitPath :=
 
 (* find Jupyter installation path *)
 (* returns above *)
-findJupyterPath[] := 
+findJupyterPath[] :=
 	SelectFirst[
 		splitPath,
 		(* check every directory in PATH to see if a Jupyter binary is a member *)
@@ -148,18 +148,18 @@ findJupyterPath[] :=
 
 (* get information about installed kernels in Jupyter *)
 (* returns kernel IDs in Jupyter *)
-getKernels[jupyterPath_String, processEnvironment_] := 
+getKernels[jupyterPath_String, processEnvironment_] :=
 	Module[{json, kernelspecAssoc},
 		(* obtain information about "jupyter kernelspec list" in JSON *)
 		json = Quiet[ImportString[RunProcess[{jupyterPath, "kernelspec", "list", "--json"}, "StandardOutput", ProcessEnvironment -> processEnvironment], "JSON"]];
 		(* transform that JSON information into an Association *)
-		kernelspecAssoc = 
+		kernelspecAssoc =
 			If[
 				FailureQ[json],
 				Association[],
 				Replace[
 					json,
-					part_List /; AllTrue[part, Head[#1] === Rule &] -> Association @ part, 
+					part_List /; AllTrue[part, Head[#1] === Rule &] -> Association @ part,
 					{0, Infinity}
 				]
 			];
@@ -183,7 +183,7 @@ getKernels[jupyterPath_String, processEnvironment_] :=
 (* removeAllQ: clear all Jupyter installations or not *)
 (* removeQ first, removeAllQ second: "add" is False, False; "remove" is True, False, and "clear" is True, True *)
 (* returns action success status *)
-configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] := 
+configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 	Module[
 		{
 			retrievedNames, kernelID, displayName,
@@ -220,7 +220,7 @@ configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 			jupyterPath = FileNameJoin[{jupyterPath, StringJoin["jupyter", fileExt]}];
 		];
 
-		mathBin = 
+		mathBin =
 			Lookup[
 				specs,
 				"WolframEngineBinary",
@@ -286,7 +286,7 @@ configureJupyter[specs_Association, removeQ_?BooleanQ, removeAllQ_?BooleanQ] :=
 
 			(* export a JSON file to the staging directory that contains all the relevant information on how to run the kernel *)
 			Export[
-				FileNameJoin[{tempDir, "kernel.json"}], 
+				FileNameJoin[{tempDir, "kernel.json"}],
 				Association[
 					"argv" -> {
 						mathBin,
